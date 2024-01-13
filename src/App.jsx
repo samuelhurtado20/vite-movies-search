@@ -5,16 +5,22 @@ import { useMovies } from './hooks/useMovies'
 import { useSearch } from './hooks/useSearch';
 
 function App() {
-  const { movies } = useMovies();
   const { search, updateSearch, error } = useSearch()
+  const [ sort, setSort ] = useState(false)
+  const { movies, getMovies, loading } = useMovies({ search, sort });
 
   const handleSubmit = (event) => {
     event.preventDefault()
     console.log({ search })
+    getMovies()
   }
 
   const handleChance = (event) => {
     updateSearch(event.target.value)
+  }
+
+  const handleSort = () =>{
+    setSort(!sort)
   }
 
   return (
@@ -25,13 +31,14 @@ function App() {
           <input value={search} onChange={handleChance} placeholder='Avenger, Titanic, ...'
             style={{ border: '1px solid transparent', borderColor: error ? 'red' : 'transparent' }}
           />
+          <input type='checkbox' onChange={handleSort} checked={sort} />
           <button>Search</button>
         </form>
       </header>
 
       <main>
         {
-          <Movies movies={movies} />
+          loading ? <h1>Loading...</h1> : <Movies movies={movies} />
         }
       </main>
     </div>
